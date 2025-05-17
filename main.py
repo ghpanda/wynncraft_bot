@@ -56,6 +56,27 @@ async def level(ctx, arg):
         lvl = data[id]["level"]
         await ctx.send(f"{classType} Level: {lvl}")
 
+@bot.command()
+async def profession(ctx, arg):
+    url = f"https://api.wynncraft.com/v3/player/{arg}/characters"
+    response = requests.get(url)
+    data = response.json()
 
+    highest_level_id = ""
+    highest_level = 0
+
+    for id in data:
+        lvl = data[id]["level"]
+        if data[id]["level"] > highest_level:
+            highest_level = lvl
+            highest_level_id = id
+
+
+    url = f"https://api.wynncraft.com/v3/player/{arg}/characters/{highest_level_id}"
+    response = requests.get(url)
+    data = response.json()
+    for p in data["professions"]:
+        level = data['professions'][p]['level']
+        await ctx.send(f"You are level {level} in {p}")
 
 bot.run(DISCORD_TOKEN, log_handler=handler, log_level=logging.DEBUG)
